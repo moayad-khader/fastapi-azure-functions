@@ -1,0 +1,1 @@
+{ "bindings": [ {"type": "serviceBusTrigger", "direction": "in", "name": "msg", "topicName": "agent", "subscriptionName": "agent-sub", "connection": "SERVICEBUS_CONN" } ] }
