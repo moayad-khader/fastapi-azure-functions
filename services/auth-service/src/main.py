@@ -4,4 +4,4 @@ app = FastAPI(title="Auth Service")
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    return {"status": 200, "message": "Running"}
