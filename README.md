@@ -1,14 +1,16 @@
 # Azure Functions FastAPI Microservices Boilerplate
 
-A comprehensive boilerplate for building microservices using Azure Functions and FastAPI with Docker Compose support.
+A comprehensive boilerplate for building microservices using Azure Functions and FastAPI with Docker Compose support. This project follows a NestJS-style architecture inspired by the activepieces TypeScript repository structure, providing a scalable foundation for both local development and Azure cloud deployment.
 
 ## 🏗️ Architecture
 
-This project consists of three microservices:
+This project consists of two main microservices with shared components:
 
-- **Auth Service** (Port 8001) - Authentication and authorization
-- **Organization Service** (Port 8002) - Organization management
-- **AI Agent Service** (Port 8003) - AI-powered agent functionality
+- **Auth Service** (Port 8001) - Authentication and authorization with API versioning
+- **Organization Service** (Port 8002) - Organization management with Service Bus integration
+- **Shared Components** - Common utilities, authentication, and core functionality
+- **Infrastructure** - Azure Bicep templates for cloud deployment
+- **API Gateway** - Nginx reverse proxy for service routing
 
 ## 🚀 Quick Start with Docker Compose
 
@@ -54,21 +56,19 @@ This project consists of three microservices:
 #### Direct Service Access:
 - **Auth Service**: http://localhost:8001
   - Health: http://localhost:8001/health
-  - Docs: http://localhost:8001/docs
-  
+  - API Docs: http://localhost:8001/docs
+  - API v1: http://localhost:8001/v1/api/
+  - API v2: http://localhost:8001/v2/api/
+
 - **Organization Service**: http://localhost:8002
   - Health: http://localhost:8002/health
-  - Docs: http://localhost:8002/docs
-  
-- **AI Agent Service**: http://localhost:8003
-  - Health: http://localhost:8003/health
-  - Docs: http://localhost:8003/docs
+  - API Docs: http://localhost:8002/docs
+  - API: http://localhost:8002/api/
 
 #### Via Nginx Reverse Proxy:
 - **Gateway**: http://localhost
   - Auth Service: http://localhost/auth/
   - Organization Service: http://localhost/organization/
-  - AI Agent Service: http://localhost/ai-agent/
   - Overall Health: http://localhost/health
 
 ## 🛠️ Development
@@ -104,14 +104,14 @@ Create `.env` files for each service to customize configuration:
 # services/auth-service/.env
 DEBUG=true
 LOG_LEVEL=debug
+JWT_SECRET_KEY=your-secret-key-change-in-production
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
 
 # services/organization-service/.env
 DEBUG=true
 COSMOS_DB_ENDPOINT=your-cosmos-endpoint
-
-# services/ai-agent-service/.env
-DEBUG=true
-SERVICE_BUS_CONNECTION=your-service-bus-connection
+AZURE_SERVICE_BUS_CONNECTION_STRING=your-service-bus-connection-string
 ```
 
 ## 📦 Docker Commands
@@ -148,6 +148,42 @@ docker build -t auth-service ./services/auth-service
 docker run -p 8001:8000 auth-service
 ```
 
+## 🛠️ Makefile Commands
+
+This project includes a Makefile for common operations:
+
+```bash
+# View all available commands
+make help
+
+# Build all Docker images
+make build
+
+# Start all services in detached mode
+make up
+
+# Stop all services
+make down
+
+# Restart all services
+make restart
+
+# View logs from all services
+make logs
+
+# Clean up everything (containers, networks, volumes)
+make clean
+
+# Run health checks on all services
+make test
+
+# Check health status
+make health
+
+# Development mode (with logs)
+make dev
+```
+
 ## 🔧 Troubleshooting
 
 ### Common Issues
@@ -181,28 +217,161 @@ docker-compose exec [service-name] bash
 docker-compose config
 ```
 
-## 🚀 Production Deployment
+## ☁️ Azure Deployment
 
-For production deployment, consider:
+This project includes Azure Bicep templates for cloud deployment:
 
-1. **Environment-specific configurations**
-2. **Secrets management**
-3. **Load balancing**
-4. **Monitoring and logging**
-5. **Security hardening**
+### Infrastructure Components
+
+- **Azure Functions** - Serverless compute for microservices
+- **Azure Cosmos DB** - NoSQL database for data storage
+- **Azure Service Bus** - Message queuing for service communication
+- **Azure API Management** - API gateway and management
+
+### Deployment Steps
+
+1. **Prerequisites**:
+   ```bash
+   # Install Azure CLI
+   az login
+   az account set --subscription "your-subscription-id"
+   ```
+
+2. **Deploy Infrastructure**:
+   ```bash
+   # Deploy using Bicep templates
+   az deployment group create \
+     --resource-group your-rg \
+     --template-file infra/main.bicep \
+     --parameters @infra/parameters.json
+   ```
+
+3. **Deploy Functions**:
+   ```bash
+   # Deploy auth service
+   cd services/auth-service
+   func azure functionapp publish your-auth-function-app
+
+   # Deploy organization service
+   cd ../organization-service
+   func azure functionapp publish your-org-function-app
+   ```
+
+### Production Considerations
+
+- **Environment-specific configurations**
+- **Azure Key Vault for secrets management**
+- **Application Insights for monitoring**
+- **Azure Front Door for load balancing**
+- **Security hardening and compliance**
 
 ## 📝 API Documentation
 
 Each service provides interactive API documentation via FastAPI's automatic docs:
 
-- Auth Service: http://localhost:8001/docs
-- Organization Service: http://localhost:8002/docs  
-- AI Agent Service: http://localhost:8003/docs
+- **Auth Service**: <http://localhost:8001/docs>
+  - Supports API versioning (v1 and v2)
+  - JWT-based authentication
+  - User management endpoints
+- **Organization Service**: <http://localhost:8002/docs>
+  - Organization CRUD operations
+  - Service Bus integration
+
+## 🏗️ Project Structure
+
+```
+azure_functions_fastapi_microservices_boilerplate/
+├── services/                    # Microservices
+│   ├── auth-service/           # Authentication service
+│   │   ├── src/               # Source code
+│   │   ├── HttpTrigger/       # Azure Functions trigger
+│   │   ├── Dockerfile         # Container configuration
+│   │   └── requirements.txt   # Python dependencies
+│   ├── organization-service/  # Organization management service
+│   │   ├── src/               # Source code
+│   │   ├── HttpTrigger/       # Azure Functions HTTP trigger
+│   │   ├── ServiceBusListener/ # Service Bus trigger
+│   │   ├── Dockerfile         # Container configuration
+│   │   └── requirements.txt   # Python dependencies
+│   └── shared/                # Shared components
+│       ├── authentication/    # Auth utilities
+│       ├── core/             # Core utilities
+│       └── utils/            # Common utilities
+├── infra/                     # Infrastructure as Code
+│   ├── main.bicep            # Main Bicep template
+│   └── modules/              # Bicep modules
+│       ├── apim.bicep        # API Management
+│       ├── cosmos.bicep      # Cosmos DB
+│       └── servicebus.bicep  # Service Bus
+├── docs/                     # Documentation
+│   ├── architecture.md      # Architecture overview
+│   └── adr/                 # Architecture Decision Records
+├── docker-compose.yml        # Docker Compose configuration
+├── nginx.conf               # Nginx reverse proxy config
+└── Makefile                 # Development commands
+```
+
+## 🔧 Features
+
+### Authentication Service
+- **API Versioning** - Support for v1 and v2 APIs
+- **JWT Authentication** - Secure token-based auth
+- **User Management** - Registration, login, profile management
+- **Password Security** - Hashing, reset, change functionality
+- **Role-based Access Control** - Admin and user roles
+
+### Organization Service
+- **CRUD Operations** - Full organization management
+- **Service Bus Integration** - Asynchronous message processing
+- **Event-driven Architecture** - Reactive service design
+
+### Shared Components
+- **Common Authentication** - Reusable auth utilities
+- **Core Utilities** - Shared business logic
+- **Standardized Responses** - Consistent API responses
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with Docker Compose
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes following the project structure
+4. Add tests for new functionality
+5. Test with Docker Compose (`make test`)
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Submit a pull request
+
+### Development Guidelines
+
+- Follow the established project structure
+- Use type hints in Python code
+- Write comprehensive tests
+- Update documentation for new features
+- Follow PEP 8 coding standards
+- Use meaningful commit messages
+
+## 📚 Additional Resources
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Azure Functions Python Developer Guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-python)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [Azure Bicep Documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
+- [Activepieces Architecture Reference](https://github.com/activepieces/activepieces)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+If you encounter any issues or have questions:
+
+1. Check the troubleshooting section above
+2. Review the service-specific README files in each service directory
+3. Check the health endpoints to verify service status
+4. Review Docker Compose logs for error details
+5. Open an issue in the repository for additional support
+
+---
+
+**Built with ❤️ using FastAPI, Azure Functions, and Docker**
