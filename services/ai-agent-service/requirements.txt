@@ -1,4 +1,0 @@
-fastapi
-starlette
-azure-functions
-azure-servicebus
