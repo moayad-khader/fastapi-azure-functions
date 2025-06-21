@@ -242,8 +242,8 @@ This project includes Azure Bicep templates for cloud deployment:
    # Deploy using Bicep templates
    az deployment group create \
      --resource-group your-rg \
-     --template-file infra/main.bicep \
-     --parameters @infra/parameters.json
+     --template-file infrastructure/main.bicep \
+     --parameters @infrastructure/parameters.json
    ```
 
 3. **Deploy Functions**:
@@ -297,7 +297,7 @@ azure_functions_fastapi_microservices_boilerplate/
 │       ├── authentication/    # Auth utilities
 │       ├── core/             # Core utilities
 │       └── utils/            # Common utilities
-├── infra/                     # Infrastructure as Code
+├── infrastructure/                     # Infrastructure as Code
 │   ├── main.bicep            # Main Bicep template
 │   └── modules/              # Bicep modules
 │       ├── apim.bicep        # API Management
