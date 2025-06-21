@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [auth-service, organization-service, ai-agent-service]
+        service: [auth-service, organization-service]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
