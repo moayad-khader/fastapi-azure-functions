@@ -1,7 +1,3 @@
-from fastapi import FastAPI
+from .app.app import app
 
-app = FastAPI(title="Auth Service")
 
-@app.get("/health")
-async def health():
-    return {"status": 200, "message": "Running"}

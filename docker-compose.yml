@@ -3,14 +3,15 @@ version: '3.8'
 services:
   auth-service:
     build:
-      context: ./services/auth-service
-      dockerfile: Dockerfile
+      context: ./services
+      dockerfile: auth-service/Dockerfile
     ports:
       - "8001:8000"
     environment:
       - PYTHONPATH=/app
     volumes:
       - ./services/auth-service:/app
+      - ./services/shared:/app/shared
     networks:
       - microservices-network
     healthcheck:
@@ -22,14 +23,15 @@ services:
 
   organization-service:
     build:
-      context: ./services/organization-service
-      dockerfile: Dockerfile
+      context: ./services
+      dockerfile: organization-service/Dockerfile
     ports:
       - "8002:8000"
     environment:
       - PYTHONPATH=/app
     volumes:
       - ./services/organization-service:/app
+      - ./services/shared:/app/shared
     networks:
       - microservices-network
     healthcheck:
@@ -41,14 +43,15 @@ services:
 
   ai-agent-service:
     build:
-      context: ./services/ai-agent-service
-      dockerfile: Dockerfile
+      context: ./services
+      dockerfile: ai-agent-service/Dockerfile
     ports:
       - "8003:8000"
     environment:
       - PYTHONPATH=/app
     volumes:
       - ./services/ai-agent-service:/app
+      - ./services/shared:/app/shared
     networks:
       - microservices-network
     healthcheck:

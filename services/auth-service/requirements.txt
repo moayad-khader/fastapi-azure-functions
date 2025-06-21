@@ -1,2 +1,12 @@
 fastapi
+starlette
 azure-functions
+pydantic[email]
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+uvicorn
+pytest
+httpx
+sqlmodel
+PyJWT
