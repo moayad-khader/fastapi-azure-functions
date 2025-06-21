@@ -356,21 +356,7 @@ azure_functions_fastapi_microservices_boilerplate/
 - [Azure Functions Python Developer Guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-python)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Azure Bicep Documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-- [Activepieces Architecture Reference](https://github.com/activepieces/activepieces)
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-If you encounter any issues or have questions:
-
-1. Check the troubleshooting section above
-2. Review the service-specific README files in each service directory
-3. Check the health endpoints to verify service status
-4. Review Docker Compose logs for error details
-5. Open an issue in the repository for additional support
 
 ---
 
