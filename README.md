@@ -1,6 +1,6 @@
 # Azure Functions FastAPI Microservices Boilerplate
 
-A comprehensive boilerplate for building microservices using Azure Functions and FastAPI with Docker Compose support. This project follows a NestJS-style architecture inspired by the activepieces TypeScript repository structure, providing a scalable foundation for both local development and Azure cloud deployment.
+A comprehensive boilerplate for building microservices using Azure Functions and FastAPI with Docker Compose support.
 
 ## 🏗️ Architecture
 
