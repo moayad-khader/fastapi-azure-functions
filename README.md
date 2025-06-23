@@ -8,9 +8,10 @@ This project consists of two main microservices with shared components:
 
 - **Auth Service** (Port 8001) - Authentication and authorization with API versioning
 - **Organization Service** (Port 8002) - Organization management with Service Bus integration
+- **API Gateway** (Port 8003) - Centralized documentation and service aggregation
 - **Shared Components** - Common utilities, authentication, and core functionality
 - **Infrastructure** - Azure Bicep templates for cloud deployment
-- **API Gateway** - Nginx reverse proxy for service routing
+- **Nginx Proxy** - Reverse proxy for service routing and load balancing
 
 ## 🚀 Quick Start with Docker Compose
 
@@ -267,7 +268,20 @@ This project includes Azure Bicep templates for cloud deployment:
 
 ## 📝 API Documentation
 
-Each service provides interactive API documentation via FastAPI's automatic docs:
+### 🚀 Unified Documentation (NEW!)
+
+**Access all microservices APIs in one place**: <http://localhost/docs>
+
+The new API Gateway provides:
+- **Centralized Swagger UI** with all microservices APIs
+- **Service switching** between individual and unified views
+- **Real-time API aggregation** from all running services
+- **Health monitoring** and service discovery
+- **Professional documentation interface** with service tagging
+
+### Individual Service Documentation
+
+Each service also provides its own interactive API documentation:
 
 - **Auth Service**: <http://localhost:8001/docs>
   - Supports API versioning (v1 and v2)
@@ -276,6 +290,11 @@ Each service provides interactive API documentation via FastAPI's automatic docs
 - **Organization Service**: <http://localhost:8002/docs>
   - Organization CRUD operations
   - Service Bus integration
+- **API Gateway**: <http://localhost:8003/docs>
+  - Documentation aggregation service
+  - Health monitoring endpoints
+
+> 💡 **Tip**: Use the unified documentation at <http://localhost/docs> for the best experience!
 
 ## 🏗️ Project Structure
 

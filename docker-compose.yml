@@ -41,6 +41,29 @@ services:
       retries: 3
       start_period: 40s
 
+  api-gateway:
+    build:
+      context: ./services
+      dockerfile: api-gateway/Dockerfile
+    ports:
+      - "8003:8000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./services/api-gateway:/app
+      - ./services/shared:/app/shared
+    networks:
+      - microservices-network
+    depends_on:
+      - auth-service
+      - organization-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   nginx:
     image: nginx:alpine
     ports:
@@ -50,6 +73,7 @@ services:
     depends_on:
       - auth-service
       - organization-service
+      - api-gateway
     networks:
       - microservices-network
 
